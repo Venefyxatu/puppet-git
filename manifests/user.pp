@@ -38,12 +38,14 @@ define git::user(
     command => "/bin/su ${name} -c '${git::params::bin} config --global user.name \"${git_name}\"'",
     unless  => "/bin/su ${name} -c '${git::params::bin} config --global user.name'|${binaries::params::grep_bin} '${git_name}'",
     require => [Package[$git::params::package]],
+    environment => "HOME=/home/${name}",
   }
 
   exec{"${name}_git_email":
     command => "/bin/su ${name} -c '${git::params::bin} config --global user.email \"${git_email}\"'",
     unless  => "/bin/su ${name} -c '${git::params::bin} config --global user.email'|${binaries::params::grep_bin} '${git_email}'",
     require => [Package[$git::params::package]],
+    environment => "HOME=/home/${name}",
   }
 
 }

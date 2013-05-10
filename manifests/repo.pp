@@ -69,6 +69,7 @@ define git::repo(
     creates => $creates,
     require => Package[$git::params::package],
     timeout => 600,
+    environment => "HOME=/home/${name}",
   }
 
   # I think tagging works, but it's possible setting a tag and a branch will just fight.
@@ -80,6 +81,7 @@ define git::repo(
       command => "${git::params::bin} checkout ${git_tag}",
       unless  => "${git::params::bin} describe --tag|${binaries::params::grep_cmd} -P '${git_tag}'",
       require => Exec["git_repo_${name}"],
+      environment => "HOME=/home/${name}",
     }
   } elsif ! $bare {
     exec {"git_${name}_co_branch":
@@ -88,6 +90,7 @@ define git::repo(
       command => "${git::params::bin} checkout ${branch}",
       unless  => "${git::params::bin} branch|${binaries::params::grep_cmd} -P '\\* ${branch}'",
       require => Exec["git_repo_${name}"],
+      environment => "HOME=/home/${name}",
     }
     if $update {
       exec {"git_${name}_pull":
@@ -96,6 +99,7 @@ define git::repo(
         command => "${git::params::bin} reset --hard HEAD && ${git::params::bin} pull origin ${branch}",
         unless  => "${git::params::bin} diff origin --no-color --exit-code",
         require => Exec["git_repo_${name}"],
+        environment => "HOME=/home/${name}",
       }
     }
   }
